@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost'; // or your host, e.g., '127.0.0.1'
-$db   = 'php_boilerplate';
+$db   = 'design-1c-class_management';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
