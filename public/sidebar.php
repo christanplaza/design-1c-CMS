@@ -10,6 +10,10 @@
             <i class="fas fa-tachometer-alt mr-3"></i>
             Dashboard
         </a>
+        <a href="students.php" class="flex items-center text-white py-4 pl-6 nav-item">
+            <i class="fas fa-user mr-3"></i>
+            Students
+        </a>
         <a href="classes.php" class="flex items-center text-white py-4 pl-6 nav-item">
             <i class="fas fa-book mr-3"></i>
             Classes
