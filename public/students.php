@@ -3,10 +3,10 @@ session_start();
 
 require '../config/db.php';
 
-// Fetch all classes
+// Fetch all students
 $sql = "SELECT * FROM students";
 $stmt = $pdo->query($sql);
-$classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
@@ -51,7 +51,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
-                <h1 class="text-3xl text-black pb-2">Classes</h1>
+                <h1 class="text-3xl text-black pb-2">Students</h1>
                 <?php if (isset($_SESSION['success_message'])) : ?>
                     <div class="relative block w-full p-4 mb-4 text-base leading-5 text-grey-700 bg-green-200 rounded-lg opacity-100 font-regular">
                         <?php echo $_SESSION['success_message']; ?>
@@ -66,7 +66,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="w-full mt-4">
                     <a href="#" onclick="toggleModal('createClassModal')" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
-                        New Class
+                        Add Student
                         <i class="fas fa-plus"></i>
                     </a>
                     <div class="bg-white overflow-auto">
@@ -74,30 +74,32 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <thead class="bg-gray-800 text-white">
                                 <tr>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ID</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Title</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Description</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Student Number</th>
+                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">First Name</th>
+                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Last Name</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700">
-                                <?php if (empty($classes)) : ?>
+                                <?php if (empty($students)) : ?>
                                     <tr>
-                                        <td colspan="3" class="text-center py-3 px-4 font-bold">No records found</td>
+                                        <td colspan="5" class="text-center py-3 px-4 font-bold">No records found</td>
                                     </tr>
                                 <?php else : ?>
-                                    <?php foreach ($classes as $class) : ?>
+                                    <?php foreach ($students as $student) : ?>
                                         <tr>
-                                            <td class="text-left py-3 px-4"><?= $class['id']; ?></td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $class['title']; ?></td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $class['description']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $student['id']; ?></td>
+                                            <td class="w-1/3 text-left py-3 px-4"><?= $student['student_number']; ?></td>
+                                            <td class="w-1/3 text-left py-3 px-4"><?= $student['first_name']; ?></td>
+                                            <td class="w-1/3 text-left py-3 px-4"><?= $student['last_name']; ?></td>
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
                                                     <!-- Edit Action -->
-                                                    <a href="javascript:void(0);" onclick="openEditModal(<?= $class['id']; ?>)" class="text-yellow-500 hover:text-yellow-700">
+                                                    <a href="javascript:void(0);" onclick="openEditModal(<?= $student['id']; ?>)" class="text-yellow-500 hover:text-yellow-700">
                                                         <i class="fas fa-pen"></i>
                                                     </a>
                                                     <!-- Delete Action -->
-                                                    <a href="javascript:void(0);" onclick="deleteClass('<?= $class['id']; ?>')" class="text-red-500 hover:text-red-700">
+                                                    <a href="javascript:void(0);" onclick="deleteClass('<?= $student['id']; ?>')" class="text-red-500 hover:text-red-700">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                 </div>
@@ -126,19 +128,30 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <button onclick="toggleModal('createClassModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
-                <h1 class="text-3xl text-black pb-6">Create Class</h1>
-                <form action="classes/process_create_class.php" method="POST">
-                    <!-- Title -->
+                <h1 class="text-3xl text-black pb-6">Add Student</h1>
+                <form action="students/process_create_student.php" method="POST">
+                    <!-- Student Number -->
                     <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-600">Title</label>
-                        <input type="text" id="title" name="title" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="student_number" class="block text-sm font-medium text-gray-600">Student Number</label>
+                        <input type="text" id="student_number" name="student_number" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea id="description" name="description" rows="4" class="mt-1 p-2 border rounded-md w-full resize-none" required></textarea>
+                    <!-- First Name and Last Name in the same row -->
+                    <div class="mb-4 flex">
+                        <!-- First Name -->
+                        <div class="w-1/2 pr-2">
+                            <label for="first_name" class="block text-sm font-medium text-gray-600">First Name</label>
+                            <input type="text" id="first_name" name="first_name" class="mt-1 p-2 border rounded-md w-full" required>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="w-1/2 pl-2">
+                            <label for="last_name" class="block text-sm font-medium text-gray-600">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="mt-1 p-2 border rounded-md w-full" required>
+                        </div>
                     </div>
+
+                    <!-- Additional fields go here -->
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
@@ -152,7 +165,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Edit Class Modal -->
-    <div id="editClassModal" class="fixed inset-0 overflow-y-auto hidden">
+    <div id="editStudentModal" class="fixed inset-0 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
             <!-- Background Overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -161,20 +174,31 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- Modal Content -->
             <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <h1 class="text-3xl text-black pb-6">Edit Class</h1>
-                <form id="editClassForm" action="classes/process_edit_class.php" method="POST">
-                    <!-- Hidden input for class ID -->
-                    <input type="hidden" id="editClassId" name="class_id" value="">
-                    <!-- Title -->
+                <h1 class="text-3xl text-black pb-6">Edit Student</h1>
+                <form id="editStudentForm" action="students/process_edit_student.php" method="POST">
+                    <!-- Student Number -->
+                    <input type="hidden" id="editStudentId" name="student_id" value="">
                     <div class="mb-4">
-                        <label for="editTitle" class="block text-sm font-medium text-gray-600">Title</label>
-                        <input type="text" id="editTitle" name="title" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="editStudentNumber" class="block text-sm font-medium text-gray-600">Student Number</label>
+                        <input type="text" id="editStudentNumber" name="editStudentNumber" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <label for="editDescription" class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea id="editDescription" name="description" rows="4" class="mt-1 p-2 border rounded-md w-full resize-none"></textarea>
+
+                    <!-- First Name and Last Name in the same row -->
+                    <div class="mb-4 flex">
+                        <!-- First Name -->
+                        <div class="w-1/2 pr-2">
+                            <label for="editStudentFirstName" class="block text-sm font-medium text-gray-600">First Name</label>
+                            <input type="text" id="editStudentFirstName" name="editStudentFirstName" class="mt-1 p-2 border rounded-md w-full" required>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="w-1/2 pl-2">
+                            <label for="editStudentLastName" class="block text-sm font-medium text-gray-600">Last Name</label>
+                            <input type="text" id="editStudentLastName" name="editStudentLastName" class="mt-1 p-2 border rounded-md w-full" required>
+                        </div>
                     </div>
+
+                    <!-- Additional fields go here -->
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
                         <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
@@ -182,7 +206,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </button>
                     </div>
                 </form>
-                <button onclick="toggleModal('editClassModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <button onclick="toggleModal('editStudentModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -193,17 +217,18 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         // Function to open the edit modal and populate the form
-        function openEditModal(classId) {
-            const modal = document.getElementById('editClassModal');
-            const form = document.getElementById('editClassForm');
-            const titleInput = document.getElementById('editTitle');
-            const descriptionInput = document.getElementById('editDescription');
-            const classIdInput = document.getElementById('editClassId');
+        function openEditModal(studentId) {
+            const modal = document.getElementById('editStudentModal');
+            const form = document.getElementById('editStudentForm');
+            const studentNumberInput = document.getElementById('editStudentNumber');
+            const studentFirstNameInput = document.getElementById('editStudentFirstName');
+            const studentLastNameInput = document.getElementById('editStudentLastName');
+            const studentIdInput = document.getElementById('editStudentId');
 
             // You may customize the AJAX request URL and method based on your server-side implementation
-            const apiUrl = 'api/get_class_details.php';
+            const apiUrl = 'api/get_student_details.php';
             const formData = new FormData();
-            formData.append('class_id', classId);
+            formData.append('student_id', studentId);
 
             // Fetch class details via AJAX
             fetch(apiUrl, {
@@ -213,28 +238,29 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 .then(response => response.json())
                 .then(data => {
                     // Populate form fields with class details
-                    titleInput.value = data.title;
-                    descriptionInput.value = data.description;
-                    classIdInput.value = classId;
+                    studentNumberInput.value = data.student_number;
+                    studentFirstNameInput.value = data.first_name;
+                    studentLastNameInput.value = data.last_name;
+                    studentIdInput.value = studentId;
 
                     // Toggle the visibility of the modal
                     modal.classList.toggle('hidden');
                 })
                 .catch(error => {
-                    console.error('Error fetching class details:', error);
+                    console.error('Error fetching student details:', error);
                 });
         }
 
-        function deleteClass(classId) {
+        function deleteClass(studentId) {
             // You can add a confirmation dialog here if needed
 
             // Send the delete request via AJAX with a POST method
-            fetch('classes/process_delete_class.php', {
+            fetch('students/process_delete_student.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(classId),
+                    body: JSON.stringify(studentId),
                 })
                 .then(response => response.json())
                 .then(data => {
