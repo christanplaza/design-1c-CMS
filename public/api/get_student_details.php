@@ -9,7 +9,7 @@ if (isset($_POST['student_id'])) {
 
     try {
         // Prepare and execute the query to retrieve class details
-        $stmt = $pdo->prepare('SELECT id, student_number, first_name, last_name FROM students WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT id, student_number, course, first_name, last_name, phone_number FROM students WHERE id = ?');
         $stmt->execute([$studentId]);
 
         // Fetch the class details
