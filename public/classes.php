@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-require '../config/db.php';
+$baseUrl = '';
+require $baseUrl . '../config/db.php';
 
 // Fetch all classes
 $sql = "SELECT * FROM classes";

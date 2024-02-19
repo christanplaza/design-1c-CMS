@@ -1,5 +1,6 @@
 <?php
 session_start();
+$baseUrl = '';
 
 // Check if the user is logged in. This assumes you're setting a session variable upon successful login.
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in'])) {
