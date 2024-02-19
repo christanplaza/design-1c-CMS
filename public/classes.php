@@ -72,7 +72,11 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($classes as $class): ?>
                                         <tr>
                                             <td class="text-left py-3 px-4"><?= $class['id']; ?></td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $class['title']; ?></td>
+                                            <td class="w-1/3 text-left text-blue-600 underline py-3 px-4">
+                                                <a href="classes/class_detail.php?class_id=<?= $class['id']; ?>">
+                                                    <?= $class['title']; ?>
+                                                </a>
+                                            </td>
                                             <td class="w-1/3 text-left py-3 px-4"><?= $class['description']; ?></td>
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
