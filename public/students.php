@@ -116,6 +116,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </div>
 
+    <!-- Create Student Modal -->
     <div id="createClassModal" class="fixed inset-0 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
             <!-- Background Overlay -->
@@ -136,9 +137,21 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" id="student_number" name="student_number" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
+                    <!-- Course -->
+                    <div class="mb-4">
+                        <label for="course" class="block text-sm font-medium text-gray-600">Course</label>
+                        <input type="text" id="course" name="course" class="mt-1 p-2 border rounded-md w-full" required>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="mb-4">
+                        <label for="phone_number" class="block text-sm font-medium text-gray-600">Phone Number</label>
+                        <input type="text" id="phone_number" name="phone_number" class="mt-1 p-2 border rounded-md w-full" required>
+                    </div>
+
                     <!-- First Name and Last Name in the same row -->
                     <div class="mb-4 flex">
-                        <!-- First Name -->
+                        <!-- First Name --> 
                         <div class="w-1/2 pr-2">
                             <label for="first_name" class="block text-sm font-medium text-gray-600">First Name</label>
                             <input type="text" id="first_name" name="first_name" class="mt-1 p-2 border rounded-md w-full" required>
@@ -183,6 +196,18 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" id="editStudentNumber" name="editStudentNumber" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
+                    <!-- Course -->
+                    <div class="mb-4">
+                        <label for="editStudentCourse" class="block text-sm font-medium text-gray-600">Course</label>
+                        <input type="text" id="editStudentCourse" name="editStudentCourse" class="mt-1 p-2 border rounded-md w-full" required>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="mb-4">
+                        <label for="editStudentPhoneNumber" class="block text-sm font-medium text-gray-600">Phone Number</label>
+                        <input type="text" id="editStudentPhoneNumber" name="editStudentPhoneNumber" class="mt-1 p-2 border rounded-md w-full" required>
+                    </div>
+
                     <!-- First Name and Last Name in the same row -->
                     <div class="mb-4 flex">
                         <!-- First Name -->
@@ -221,6 +246,8 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const modal = document.getElementById('editStudentModal');
             const form = document.getElementById('editStudentForm');
             const studentNumberInput = document.getElementById('editStudentNumber');
+            const studentCourse = document.getElementById('editStudentCourse');
+            const studentPhoneNumber = document.getElementById('editStudentPhoneNumber');
             const studentFirstNameInput = document.getElementById('editStudentFirstName');
             const studentLastNameInput = document.getElementById('editStudentLastName');
             const studentIdInput = document.getElementById('editStudentId');
@@ -241,6 +268,8 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     studentNumberInput.value = data.student_number;
                     studentFirstNameInput.value = data.first_name;
                     studentLastNameInput.value = data.last_name;
+                    studentCourse.value = data.course;
+                    studentPhoneNumber.value = data.phone_number;
                     studentIdInput.value = studentId;
 
                     // Toggle the visibility of the modal
