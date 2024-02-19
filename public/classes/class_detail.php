@@ -1,7 +1,9 @@
 <?php
 session_start();
 
-require '../../config/db.php';
+$baseUrl = '../';
+require $baseUrl . '../config/db.php';
+// require '../../config/db.php';
 
 // Fetch class details
 if (isset($_GET['class_id'])) {
