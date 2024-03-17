@@ -66,9 +66,8 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endif; ?>
 
                 <div class="w-full mt-4">
-                    <a href="#" onclick="toggleModal('createClassModal')" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
-                        Add Student
-                        <i class="fas fa-plus"></i>
+                    <a href="<?= $baseUrl ?>students/process_create_students_from_redis.php" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
+                        Migrate Students from Redis
                     </a>
                     <div class="bg-white overflow-auto">
                         <table class="min-w-full bg-white">
