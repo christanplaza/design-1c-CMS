@@ -5,9 +5,16 @@ $baseUrl = '';
 require $baseUrl . '../config/db.php';
 
 // Fetch all classes
-$sql = "SELECT * FROM classes";
+$sql = "SELECT classes.*, teachers.name AS teacher_name 
+        FROM classes 
+        INNER JOIN teachers ON classes.teacher_id = teachers.id";
 $stmt = $pdo->query($sql);
 $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = "SELECT * FROM teachers";
+$stmt = $pdo->query($sql);
+$teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
@@ -81,7 +88,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 </a>
                                             </td>
                                             <td class="text-left py-3 px-4"><?= $class['course']; ?></td>
-                                            <td class="text-left py-3 px-4"><?= $class['teacher']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $class['teacher_name']; ?></td>
                                             <td class="w-1/4 text-left py-3 px-4"><?= $class['description']; ?></td>
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
@@ -139,9 +146,16 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 // Populate form fields with class details
                 titleInput.value = data.title;
                 courseInput.value = data.course;
-                teacherInput.value = data.teacher;
                 descriptionInput.value = data.description;
                 classIdInput.value = classId;
+
+                Array.from(teacherInput.options).forEach(option => {
+                    if (option.value == data.teacher_id) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                });
 
                 // Toggle the visibility of the modal
                 modal.classList.toggle('hidden');

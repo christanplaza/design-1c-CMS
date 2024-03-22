@@ -24,10 +24,14 @@
                     <input type="text" id="editCourse" name="course" class="mt-1 p-2 border rounded-md w-full" placeholder="e.g ENCE4A" required>
                 </div>
 
-                <!-- Year Level & Section -->
+                <!-- Teacher -->
                 <div class="mb-4">
                     <label for="editTeacher" class="block text-sm font-medium text-gray-600">Teacher</label>
-                    <input type="text" id="editTeacher" name="teacher" class="mt-1 p-2 border rounded-md w-full" placeholder="e.g John Doe" required>
+                    <select id="editTeacher" name="teacher" class="mt-1 p-2 border rounded-md w-full" required>
+                        <?php foreach($teachers as $teacher) : ?>
+                            <option value="<?= $teacher['id']; ?>"><?= $teacher['name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <!-- Description -->

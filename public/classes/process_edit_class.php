@@ -8,13 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $classId = filter_input(INPUT_POST, 'class_id', FILTER_SANITIZE_NUMBER_INT);
     $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $course = filter_input(INPUT_POST, 'course', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $teacher = filter_input(INPUT_POST, 'teacher', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $teacher_id = filter_input(INPUT_POST, 'teacher', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     try {
         // Update class details in the database
-        $stmt = $pdo->prepare('UPDATE classes SET title = ?, course = ?, teacher = ?, description = ? WHERE id = ?');
-        $stmt->execute([$title, $course, $teacher, $description, $classId]);
+        $stmt = $pdo->prepare('UPDATE classes SET title = ?, course = ?, teacher_id = ?, description = ? WHERE id = ?');
+        $stmt->execute([$title, $course, $teacher_id, $description, $classId]);
 
         $_SESSION['success_message'] = 'Class updated successfully';
     } catch (PDOException $e) {
