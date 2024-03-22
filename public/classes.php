@@ -5,9 +5,16 @@ $baseUrl = '';
 require $baseUrl . '../config/db.php';
 
 // Fetch all classes
-$sql = "SELECT * FROM classes";
+$sql = "SELECT classes.*, teachers.name AS teacher_name 
+        FROM classes 
+        INNER JOIN teachers ON classes.teacher_id = teachers.id";
 $stmt = $pdo->query($sql);
 $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = "SELECT * FROM teachers";
+$stmt = $pdo->query($sql);
+$teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
@@ -59,8 +66,10 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <thead class="bg-gray-800 text-white">
                                 <tr>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ID</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Title</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Description</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Title</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Course</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Teacher</th>
+                                    <th class="w-1/4 text-left py-3 px-4 uppercase font-semibold text-sm">Description</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                                 </tr>
                             </thead>
@@ -73,12 +82,14 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($classes as $class): ?>
                                         <tr>
                                             <td class="text-left py-3 px-4"><?= $class['id']; ?></td>
-                                            <td class="w-1/3 text-left text-blue-600 underline py-3 px-4">
+                                            <td class="w-1/4 text-left text-blue-600 underline py-3 px-4">
                                                 <a href="classes/class_detail.php?class_id=<?= $class['id']; ?>">
                                                     <?= $class['title']; ?>
                                                 </a>
                                             </td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $class['description']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $class['course']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $class['teacher_name']; ?></td>
+                                            <td class="w-1/4 text-left py-3 px-4"><?= $class['description']; ?></td>
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
                                                     <!-- Edit Action -->
@@ -103,82 +114,11 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     </div>
 
-    <div id="createClassModal" class="fixed inset-0 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-            <!-- Background Overlay -->
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-
-            <!-- Modal Content -->
-            <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <button onclick="toggleModal('createClassModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
-                    <i class="fas fa-times"></i>
-                </button>
-                <h1 class="text-3xl text-black pb-6">Create Class</h1>
-                <form action="classes/process_create_class.php" method="POST">
-                    <!-- Title -->
-                    <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-600">Title</label>
-                        <input type="text" id="title" name="title" class="mt-1 p-2 border rounded-md w-full" required>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea id="description" name="description" rows="4" class="mt-1 p-2 border rounded-md w-full resize-none" required></textarea>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="flex items-center justify-end">
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:shadow-outline-green active:bg-green-800">
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Create Class Modal -->
+    <?php include('components/modal_create_class.php'); ?>
 
     <!-- Edit Class Modal -->
-    <div id="editClassModal" class="fixed inset-0 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-            <!-- Background Overlay -->
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-
-            <!-- Modal Content -->
-            <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <h1 class="text-3xl text-black pb-6">Edit Class</h1>
-                <form id="editClassForm" action="classes/process_edit_class.php" method="POST">
-                    <!-- Hidden input for class ID -->
-                    <input type="hidden" id="editClassId" name="class_id" value="">
-                    <!-- Title -->
-                    <div class="mb-4">
-                        <label for="editTitle" class="block text-sm font-medium text-gray-600">Title</label>
-                        <input type="text" id="editTitle" name="title" class="mt-1 p-2 border rounded-md w-full" required>
-                    </div>
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <label for="editDescription" class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea id="editDescription" name="description" rows="4" class="mt-1 p-2 border rounded-md w-full resize-none"></textarea>
-                    </div>
-                    <!-- Submit Button -->
-                    <div class="flex items-center justify-end">
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
-                            Update Class
-                        </button>
-                    </div>
-                </form>
-                <button onclick="toggleModal('editClassModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+    <?php include('components/modal_edit_class.php'); ?>
 
     <script>
         // Function to open the edit modal and populate the form
@@ -186,6 +126,8 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const modal = document.getElementById('editClassModal');
             const form = document.getElementById('editClassForm');
             const titleInput = document.getElementById('editTitle');
+            const courseInput = document.getElementById('editCourse');
+            const teacherInput = document.getElementById('editTeacher');
             const descriptionInput = document.getElementById('editDescription');
             const classIdInput = document.getElementById('editClassId');
 
@@ -203,8 +145,17 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             .then(data => {
                 // Populate form fields with class details
                 titleInput.value = data.title;
+                courseInput.value = data.course;
                 descriptionInput.value = data.description;
                 classIdInput.value = classId;
+
+                Array.from(teacherInput.options).forEach(option => {
+                    if (option.value == data.teacher_id) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                });
 
                 // Toggle the visibility of the modal
                 modal.classList.toggle('hidden');

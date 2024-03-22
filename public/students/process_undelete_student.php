@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Delete the class from the database
         
-        $stmt = $pdo->prepare('UPDATE students SET is_deleted = 1 WHERE id = ?');
+        $stmt = $pdo->prepare('UPDATE students SET is_deleted = 0 WHERE id = ?');
         $stmt->execute([$studentId]);
 
         // Optionally, you can set a success message in the session

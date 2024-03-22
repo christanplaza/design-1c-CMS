@@ -9,7 +9,10 @@ if (isset($_POST['class_id'])) {
 
     try {
         // Prepare and execute the query to retrieve class details
-        $stmt = $pdo->prepare('SELECT id, title, description FROM classes WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT c.id, c.title, c.course, t.name AS teacher_name, c.description 
+                      FROM classes c 
+                      INNER JOIN teachers t ON c.teacher_id = t.id 
+                      WHERE c.id = ?');
         $stmt->execute([$classId]);
 
         // Fetch the class details

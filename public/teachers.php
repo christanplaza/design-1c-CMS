@@ -4,10 +4,10 @@ session_start();
 $baseUrl = '';
 require $baseUrl . '../config/db.php';
 
-// Fetch all students
-$sql = "SELECT * FROM students;";
+// Fetch all teachers
+$sql = "SELECT * FROM teachers;";
 $stmt = $pdo->query($sql);
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
@@ -52,7 +52,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
-                <h1 class="text-3xl text-black pb-2">Students</h1>
+                <h1 class="text-3xl text-black pb-2">Teachers</h1>
                 <?php if (isset($_SESSION['success_message'])) : ?>
                     <div class="relative block w-full p-4 mb-4 text-base leading-5 text-grey-700 bg-green-200 rounded-lg opacity-100 font-regular">
                         <?php echo $_SESSION['success_message']; ?>
@@ -66,41 +66,38 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endif; ?>
 
                 <div class="w-full mt-4">
-                    <a href="<?= $baseUrl ?>students/process_create_students_from_redis.php" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
-                        Migrate Students from Redis
+                    <a href="#" onclick="toggleModal('createTeacherModal')" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
+                        New Teacher
+                        <i class="fas fa-plus"></i>
                     </a>
                     <div class="bg-white overflow-auto">
                         <table class="min-w-full bg-white">
                             <thead class="bg-gray-800 text-white">
                                 <tr>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ID</th>
-                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Student Number</th>
-                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Course</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">First Name</th>
-                                    <th class="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">Last Name</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Name</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Email</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700">
-                                <?php if (empty($students)) : ?>
+                                <?php if (empty($teachers)) : ?>
                                     <tr>
                                         <td colspan="5" class="text-center py-3 px-4 font-bold">No records found</td>
                                     </tr>
                                 <?php else : ?>
-                                    <?php foreach ($students as $student) : ?>
+                                    <?php foreach ($teachers as $teacher) : ?>
                                         <tr>
-                                            <td class="text-left py-3 px-4"><?= $student['id']; ?></td>
-                                            <td class="text-left py-3 px-4"><?= $student['student_number']; ?></td>
-                                            <td class="text-left py-3 px-4"><?= $student['course']; ?></td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $student['first_name']; ?></td>
-                                            <td class="w-1/3 text-left py-3 px-4"><?= $student['last_name']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $teacher['id']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $teacher['name']; ?></td>
+                                            <td class="text-left py-3 px-4"><?= $teacher['email_address']; ?></td>
                                             <td class="text-left py-3 px-4">
-                                                <?php if ($student['is_deleted'] == 1): ?>
-                                                    <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
-                                                        Deleted
+                                                <?php if ($teacher['status'] == 'inactive'): ?>
+                                                    <span class="bg-orange-100 text-orange-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-orange-900 dark:text-orange-300">
+                                                        Inactive
                                                     </span>
-                                                <?php else: ?>
+                                                <?php elseif($teacher['status'] == 'active'): ?>
                                                     <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
                                                         Active
                                                     </span>
@@ -109,13 +106,13 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
                                                     <!-- Edit Action -->
-                                                    <a href="javascript:void(0);" onclick="openEditModal(<?= $student['id']; ?>)" class="text-yellow-500 hover:text-yellow-700">
+                                                    <a href="javascript:void(0);" onclick="openEditModal(<?= $teacher['id']; ?>)" class="text-yellow-500 hover:text-yellow-700">
                                                         <i class="fas fa-pen"></i>
                                                     </a>
                                                     <!-- Delete Action -->
-                                                    <a href="javascript:void(0);" onclick="deleteClass('<?= $student['id']; ?>')" class="text-red-500 hover:text-red-700">
+                                                    <!-- <a href="javascript:void(0);" onclick="deleteClass('<?= $teacher['id']; ?>')" class="text-red-500 hover:text-red-700">
                                                         <i class="fas fa-trash"></i>
-                                                    </a>
+                                                    </a> -->
                                                 </div>
                                             </td>
                                         </tr>
@@ -131,7 +128,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Create Student Modal -->
-    <div id="createClassModal" class="fixed inset-0 overflow-y-auto hidden">
+    <div id="createTeacherModal" class="fixed inset-0 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
             <!-- Background Overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -140,45 +137,22 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- Modal Content -->
             <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <button onclick="toggleModal('createClassModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <button onclick="toggleModal('createTeacherModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
-                <h1 class="text-3xl text-black pb-6">Add Student</h1>
-                <form action="students/process_create_student.php" method="POST">
-                    <!-- Student Number -->
+                <h1 class="text-3xl text-black pb-6">Add Teacher</h1>
+                <form action="teachers/process_create_teacher.php" method="POST">
+                    <!-- Teacher Name -->
                     <div class="mb-4">
-                        <label for="student_number" class="block text-sm font-medium text-gray-600">Student Number</label>
-                        <input type="text" id="student_number" name="student_number" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="teacher_name" class="block text-sm font-medium text-gray-600">Name</label>
+                        <input type="text" id="teacher_name" name="teacher_name" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
-                    <!-- Course -->
+                    <!-- Email -->
                     <div class="mb-4">
-                        <label for="course" class="block text-sm font-medium text-gray-600">Course</label>
-                        <input type="text" id="course" name="course" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="teacher_email" class="block text-sm font-medium text-gray-600">Email Address</label>
+                        <input type="email" id="teacher_email" name="teacher_email" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
-
-                    <!-- Phone Number -->
-                    <div class="mb-4">
-                        <label for="phone_number" class="block text-sm font-medium text-gray-600">Phone Number</label>
-                        <input type="text" id="phone_number" name="phone_number" class="mt-1 p-2 border rounded-md w-full" required>
-                    </div>
-
-                    <!-- First Name and Last Name in the same row -->
-                    <div class="mb-4 flex">
-                        <!-- First Name --> 
-                        <div class="w-1/2 pr-2">
-                            <label for="first_name" class="block text-sm font-medium text-gray-600">First Name</label>
-                            <input type="text" id="first_name" name="first_name" class="mt-1 p-2 border rounded-md w-full" required>
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="w-1/2 pl-2">
-                            <label for="last_name" class="block text-sm font-medium text-gray-600">Last Name</label>
-                            <input type="text" id="last_name" name="last_name" class="mt-1 p-2 border rounded-md w-full" required>
-                        </div>
-                    </div>
-
-                    <!-- Additional fields go here -->
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
@@ -192,7 +166,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Edit Class Modal -->
-    <div id="editStudentModal" class="fixed inset-0 overflow-y-auto hidden">
+    <div id="editTeacherModal" class="fixed inset-0 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
             <!-- Background Overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -202,50 +176,38 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <!-- Modal Content -->
             <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <h1 class="text-3xl text-black pb-6">Edit Student</h1>
-                <form id="editStudentForm" action="students/process_edit_student.php" method="POST">
+                <form id="editTeacherForm" action="teachers/process_edit_teacher.php" method="POST">
                     <!-- Student Number -->
-                    <input type="hidden" id="editStudentId" name="student_id" value="">
+                    <input type="hidden" id="editTeacherId" name="teacher_id" value="">
                     <div class="mb-4">
-                        <label for="editStudentNumber" class="block text-sm font-medium text-gray-600">Student Number</label>
-                        <input type="text" id="editStudentNumber" name="editStudentNumber" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="editTeacherName" class="block text-sm font-medium text-gray-600">Name</label>
+                        <input type="text" id="editTeacherName" name="editTeacherName" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
-                    <!-- Course -->
+                    <!-- Email -->
                     <div class="mb-4">
-                        <label for="editStudentCourse" class="block text-sm font-medium text-gray-600">Course</label>
-                        <input type="text" id="editStudentCourse" name="editStudentCourse" class="mt-1 p-2 border rounded-md w-full" required>
+                        <label for="editTeacherEmail" class="block text-sm font-medium text-gray-600">Email Address</label>
+                        <input type="email" id="editTeacherEmail" name="editTeacherEmail" class="mt-1 p-2 border rounded-md w-full" required>
                     </div>
 
-                    <!-- Phone Number -->
+                    <!-- Status -->
                     <div class="mb-4">
-                        <label for="editStudentPhoneNumber" class="block text-sm font-medium text-gray-600">Phone Number</label>
-                        <input type="text" id="editStudentPhoneNumber" name="editStudentPhoneNumber" class="mt-1 p-2 border rounded-md w-full" required>
-                    </div>
-
-                    <!-- First Name and Last Name in the same row -->
-                    <div class="mb-4 flex">
-                        <!-- First Name -->
-                        <div class="w-1/2 pr-2">
-                            <label for="editStudentFirstName" class="block text-sm font-medium text-gray-600">First Name</label>
-                            <input type="text" id="editStudentFirstName" name="editStudentFirstName" class="mt-1 p-2 border rounded-md w-full" required>
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="w-1/2 pl-2">
-                            <label for="editStudentLastName" class="block text-sm font-medium text-gray-600">Last Name</label>
-                            <input type="text" id="editStudentLastName" name="editStudentLastName" class="mt-1 p-2 border rounded-md w-full" required>
-                        </div>
+                        <label for="editTeacherStatus" class="block text-sm font-medium text-gray-600">Status</label>
+                        <select id="editTeacherStatus" name="editTeacherStatus" class="mt-1 p-2 border rounded-md w-full" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
                     </div>
 
                     <!-- Additional fields go here -->
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
                         <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
-                            Update Class
+                            Update Teacher
                         </button>
                     </div>
                 </form>
-                <button onclick="toggleModal('editStudentModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <button onclick="toggleModal('editTeacherModal')" class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -256,20 +218,18 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         // Function to open the edit modal and populate the form
-        function openEditModal(studentId) {
-            const modal = document.getElementById('editStudentModal');
-            const form = document.getElementById('editStudentForm');
-            const studentNumberInput = document.getElementById('editStudentNumber');
-            const studentCourse = document.getElementById('editStudentCourse');
-            const studentPhoneNumber = document.getElementById('editStudentPhoneNumber');
-            const studentFirstNameInput = document.getElementById('editStudentFirstName');
-            const studentLastNameInput = document.getElementById('editStudentLastName');
-            const studentIdInput = document.getElementById('editStudentId');
+        function openEditModal(teacherId) {
+            const modal = document.getElementById('editTeacherModal');
+            const form = document.getElementById('editTeacherForm');
+            const teacherNameInput = document.getElementById('editTeacherName');
+            const teacherEmailInput = document.getElementById('editTeacherEmail');
+            const teacherStatusInput = document.getElementById('editTeacherStatus');
+            const studentIdInput = document.getElementById('editTeacherId');
 
             // You may customize the AJAX request URL and method based on your server-side implementation
-            const apiUrl = 'api/get_student_details.php';
+            const apiUrl = 'api/get_teacher_details.php';
             const formData = new FormData();
-            formData.append('student_id', studentId);
+            formData.append('teacher_id', teacherId);
 
             // Fetch class details via AJAX
             fetch(apiUrl, {
@@ -279,31 +239,29 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 .then(response => response.json())
                 .then(data => {
                     // Populate form fields with class details
-                    studentNumberInput.value = data.student_number;
-                    studentFirstNameInput.value = data.first_name;
-                    studentLastNameInput.value = data.last_name;
-                    studentCourse.value = data.course;
-                    studentPhoneNumber.value = data.phone_number;
-                    studentIdInput.value = studentId;
+                    teacherNameInput.value = data.name;
+                    teacherEmailInput.value = data.email_address;
+                    teacherStatusInput.value = data.status;
+                    studentIdInput.value = teacherId;
 
                     // Toggle the visibility of the modal
                     modal.classList.toggle('hidden');
                 })
                 .catch(error => {
-                    console.error('Error fetching student details:', error);
+                    console.error('Error fetching teacher details:', error);
                 });
         }
 
-        function deleteClass(studentId) {
+        function deleteClass(teacherId) {
             // You can add a confirmation dialog here if needed
 
             // Send the delete request via AJAX with a POST method
-            fetch('students/process_delete_student.php', {
+            fetch('teachers/process_delete_teacher.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(studentId),
+                    body: JSON.stringify(teacherId),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -313,7 +271,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     }
                 })
                 .catch(error => {
-                    console.error('Error deleting class:', error);
+                    console.error('Error deleting teacher:', error);
                 });
         }
 
