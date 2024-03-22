@@ -49,13 +49,13 @@ try {
     
         if ($count == 0) {
             // Student does not exist, proceed with insertion
-            $insert_sql = "INSERT INTO students (student_number, course, first_name, last_name, phone_number) VALUES (:student_number, :course, :first_name, :last_name, :phone_number)";
+            $insert_sql = "INSERT INTO students (student_number, course, first_name, last_name, phone_number, is_deleted) VALUES (:student_number, :course, :first_name, :last_name, :phone_number, 0)";
             $stmt = $pdo->prepare($insert_sql);
             $stmt->bindParam(':student_number', $student['student_number'], PDO::PARAM_STR);
             $stmt->bindParam(':course', $student['course'], PDO::PARAM_STR);
             $stmt->bindParam(':first_name', $student['first_name'], PDO::PARAM_STR);
             $stmt->bindParam(':last_name', $student['last_name'], PDO::PARAM_STR);
-            $stmt->bindParam(':phone_number', $student['phone_number'], PDO::PARAM_STR);
+            $stmt->bindParam(':phone_number', $student['phone_number'], PDO::PARAM_STR) ;
             $stmt->execute();
         } else {
             // Student already exists, skip insertion
