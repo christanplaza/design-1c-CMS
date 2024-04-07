@@ -76,7 +76,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <tbody class="text-gray-700">
                                 <?php if (empty($classes)): ?>
                                     <tr>
-                                        <td colspan="4" class="text-center py-3 px-4 font-bold">No records found</td>
+                                        <td colspan="6" class="text-center py-3 px-4 font-bold">No records found</td>
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($classes as $class): ?>
