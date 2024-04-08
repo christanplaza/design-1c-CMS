@@ -6,6 +6,8 @@ require_once '../../config/db.php';
 // Retrieve the class_id from the request
 $classId = $_GET['class_id'];
 
+$minutesLateThreshold = 30;
+
 // Get today's date and day of the week
 $todayDate = date('Y-m-d');
 $dayOfWeek = date('N'); // 1 (Monday) to 7 (Sunday)
@@ -27,7 +29,7 @@ $classStartTime = strtotime($classSchedule['start_time']);
 $classEndTime = strtotime($classSchedule['end_time']);
 
 // Calculate the late threshold (15 minutes after class start time)
-$lateThreshold = $classStartTime + (5 * 60);
+$lateThreshold = $classStartTime + ($minutesLateThreshold * 60);
 
 // Retrieve the class details
 $stmt = $pdo->prepare("SELECT * FROM classes WHERE id = ?");
@@ -45,6 +47,8 @@ foreach ($enrolledStudents as $student) {
     $studentNumber = $student['student_number'];
     $firstName = $student['first_name'];
     $lastName = $student['last_name'];
+    $phoneNumber = $student['phone_number'];
+    $attendanceTimeStamp = '';
 
     // Check if the student has an attendance record for today
     $stmt = $pdo->prepare("SELECT * FROM attendance_table WHERE class_id = ? AND DATE(first_detected) = ? AND student_number = ?");
@@ -53,6 +57,7 @@ foreach ($enrolledStudents as $student) {
 
     if ($attendanceRecord) {
         $firstSeenTimestamp = strtotime($attendanceRecord['first_detected']);
+        $attendanceTimeStamp = date('d-m-Y h:i A', $firstSeenTimestamp);
 
         if ($firstSeenTimestamp <= $lateThreshold) {
             $status = 'Present';
@@ -67,7 +72,9 @@ foreach ($enrolledStudents as $student) {
         'first_name' => $firstName,
         'last_name' => $lastName,
         'student_number' => $studentNumber,
-        'status' => $status
+        'phone_number' => $phoneNumber,
+        'status' => $status,
+        'first_seen' => $attendanceTimeStamp,
     ];
 }
 
