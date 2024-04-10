@@ -6,7 +6,7 @@ require_once '../../config/db.php';
 // Retrieve the class_id from the request
 $classId = $_GET['class_id'];
 
-$minutesLateThreshold = 30;
+$minutesLateThreshold = 11;
 
 // Get today's date and day of the week
 $todayDate = date('Y-m-d');
