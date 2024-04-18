@@ -2,10 +2,11 @@
 // Include config.php
 require_once '../../config/config.php';
 require_once '../../config/db.php';
+session_start();
 
 // Retrieve the class_id and period from the request
-$classId = $_GET['class_id'];
-$period = $_GET['period'];
+$classId = $_POST['class_id'];
+$period = $_POST['period'];
 
 // Include the PHPSpreadsheet and PHPMailer libraries
 require_once '../../vendor/autoload.php';
@@ -147,12 +148,15 @@ try {
     // Send the email
     $mail->send();
 
-    echo 'Attendance summary sent successfully.';
+    $_SESSION['success_message'] = "Attendance summary sent successfully.";
 } catch (Exception $e) {
-    echo "Email could not be sent. Error: {$mail->ErrorInfo}";
+    $_SESSION['error_message'] = "Email could not be sent. Error: {$mail->ErrorInfo}";
 }
+
+
 
 // Delete the temporary file
 unlink($tempFilePath);
-?>
+
+header('Location: ../classes/class_detail.php?class_id=' . $classId);
 ?>

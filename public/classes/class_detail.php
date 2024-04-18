@@ -60,6 +60,30 @@ $days_of_week = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
                 <div class="bg-white p-6 rounded-md shadow-md mb-6">
                     <h1 class="text-3xl text-black pb-2"><?= $class['title']; ?></h1>
                     <p class="text-gray-700"><?= $class['description']; ?></p>
+                    <hr class="my-6">
+                    <p>Get attendance summary via Email (Sent to teacher's email address)</p>
+                    <form action="../api/get_summary.php" method="POST">
+                        <input type="hidden" name="class_id" value="<?= $class['id']; ?>">
+                        <select id="period" name="period" class="mt-1 p-2 border rounded-md">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="semestral">Semestral</option>
+                        </select>
+                        <button type="submit" class="inline-block py-2 px-4 bg-green-600 text-white rounded-md mb-4 hover:bg-green-700 focus:outline-none focus:shadow-outline-blue active:bg-green-800">
+                            Get summary
+                        </button>
+                    </form>
+                    <?php if (isset($_SESSION['success_message'])): ?>
+                        <div class="relative block w-full p-4 mb-4 text-base leading-5 text-grey-700 bg-green-200 rounded-lg opacity-100 font-regular">
+                            <?php echo $_SESSION['success_message']; ?>
+                        </div>
+                        <?php unset($_SESSION['success_message']); ?>
+                    <?php elseif (isset($_SESSION['error_message'])): ?>
+                        <div class="relative block w-full p-4 mb-4 text-base leading-5 text-grey-700 bg-red-200 rounded-lg opacity-100 font-regular">
+                            <?php echo $_SESSION['error_message']; ?>
+                        </div>
+                        <?php unset($_SESSION['error_message']); ?>
+                    <?php endif; ?>
                     <!-- Add more details as needed -->
                 </div>
 
