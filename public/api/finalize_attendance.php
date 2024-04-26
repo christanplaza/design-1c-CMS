@@ -18,6 +18,15 @@ $stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ? AND day_of_wee
 $stmt->execute([$classId, $days[$dayOfWeek]]);
 $classSchedule = $stmt->fetch();
 
+$stmt = $pdo->prepare("SELECT title FROM classes WHERE id = ?");
+$stmt->execute([$classId]);
+$classInfo = $stmt->fetch();
+
+$start_time_formatted = date("h:i A", strtotime($classSchedule['start_time']));
+$end_time_formatted = date("h:i A", strtotime($classSchedule['end_time']));
+
+$classScheduleInformation = $classSchedule['day_of_week'] . ": " . $start_time_formatted . "-" . $end_time_formatted;
+
 if (!$classSchedule) {
     // No class schedule found for today
     echo json_encode(['error' => 'No class schedule found for today']);
@@ -78,7 +87,13 @@ foreach ($enrolledStudents as $student) {
     ];
 }
 
+$returnData = [
+    'class_title' => $classInfo['title'],
+    'class_schedule' => $classScheduleInformation,
+    'attendance_data' => $attendanceData
+];
+
 // Return the attendance data as JSON response
 header('Content-Type: application/json');
-echo json_encode($attendanceData);
+echo json_encode($returnData);
 ?>
