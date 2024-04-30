@@ -9,7 +9,7 @@ $redis->connect(REDIS_HOST, REDIS_PORT);
 
 // If authentication is required
 $redis->auth(REDIS_PASSWORD);
-
+    
 // Retrieve data
 $keys = $redis->HKEYS('register');
 

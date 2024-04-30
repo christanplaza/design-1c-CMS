@@ -1,3 +1,4 @@
+<?php phpinfo() ?>
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
     <?php include 'head.php'; ?>

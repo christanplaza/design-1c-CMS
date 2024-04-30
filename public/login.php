@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../config/db.php'; // Include your database connection
+include '../config/db.php'; // Database Connection
 
 // Function to send JSON response
 function sendJsonResponse($status, $message, $data = null) {
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" || $isApiRequest) {
             // For web request, set session variables and redirect to dashboard
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['logged_in'] = time();
-            header('Location: classes.php');
+            header('Location: students.php');
             exit;
         }
     } else {

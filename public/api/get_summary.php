@@ -8,6 +8,9 @@ session_start();
 $classId = $_POST['class_id'];
 $period = $_POST['period'];
 
+
+// When ga start kag end ang 1st sem kag 2nd sem 
+
 // Include the PHPSpreadsheet and PHPMailer libraries
 require_once '../../vendor/autoload.php';
 
@@ -43,7 +46,7 @@ if ($period === 'weekly') {
 } elseif ($period === 'semestral') {
     $currentMonth = date('m');
     $currentYear = date('Y');
-    if ($currentMonth >= 1 && $currentMonth <= 6) {
+    if ($currentMonth >= 1 && $currentMonth <= 6) { // Sem 1 = 1st half of year, sem 2 = 2nd half of year
         $startDate = $currentYear . '-01-01';
         $endDate = $currentYear . '-06-30';
     } else {

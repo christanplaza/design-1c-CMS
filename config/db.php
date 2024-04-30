@@ -1,7 +1,7 @@
 <?php
 // Set Default Timezone
 date_default_timezone_set('Asia/Manila'); 
-$host = 'localhost'; // or your host, e.g., '127.0.0.1'
+$host = 'localhost'; 
 $db   = 'design-1c-class_management';
 $user = 'root';
 $pass = '';
