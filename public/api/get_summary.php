@@ -34,7 +34,6 @@ $stmt = $pdo->prepare("SELECT * FROM classes WHERE id = ? ");
 $stmt->execute([$classId]);
 $classInfo = $stmt->fetch();
 
-
 if ($period === 'weekly') {
     $startDate = date('Y-m-d', strtotime('-1 week'));
     $endDate = $currentDate;
@@ -99,16 +98,21 @@ $teacherInfo = $stmt->fetch();
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
+$sheet->setCellValue('A1', 'Class Name: ');
+$sheet->setCellValue('B1', $classInfo['title']);
+$sheet->setCellValue('A2', 'Course: ');
+$sheet->setCellValue('B2', $classInfo['course']);
+
 // Set the header row
-$sheet->setCellValue('A1', 'Student Number');
-$sheet->setCellValue('B1', 'First Name');
-$sheet->setCellValue('C1', 'Last Name');
-$sheet->setCellValue('D1', 'Present Count');
-$sheet->setCellValue('E1', 'Late Count');
-$sheet->setCellValue('F1', 'Absent Count');
+$sheet->setCellValue('A3', 'Student Number');
+$sheet->setCellValue('B3', 'First Name');
+$sheet->setCellValue('C3', 'Last Name');
+$sheet->setCellValue('D3', 'Present Count');
+$sheet->setCellValue('E3', 'Late Count');
+$sheet->setCellValue('F3', 'Absent Count');
 
 // Populate the data rows
-$rowIndex = 2;
+$rowIndex = 4;
 foreach ($attendanceSummary as $student) {
     $sheet->setCellValue('A' . $rowIndex, $student['student_number']);
     $sheet->setCellValue('B' . $rowIndex, $student['first_name']);

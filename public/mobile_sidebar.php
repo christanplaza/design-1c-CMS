@@ -9,18 +9,6 @@
 
     <!-- Dropdown Nav -->
     <nav :class="isOpen ? 'flex': 'hidden'" class="flex flex-col pt-4">
-        <a href="<?= $baseUrl ?>dashboard.php" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
-            <i class="fas fa-tachometer-alt mr-3"></i>
-            Dashboard
-        </a>
-        <a href="<?= $baseUrl ?>blank.php" class="flex items-center active-nav-link text-white py-2 pl-4 nav-item">
-            <i class="fas fa-sticky-note mr-3"></i>
-            Blank Page
-        </a>
-        <a href="<?= $baseUrl ?>#" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
-            <i class="fas fa-user mr-3"></i>
-            My Account
-        </a>
         <a href="<?= $baseUrl ?>logout.php" class="flex items-center text-white opacity-75 hover:opacity-100 py-2 pl-4 nav-item">
             <i class="fas fa-sign-out-alt mr-3"></i>
             Sign Out

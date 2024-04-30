@@ -26,9 +26,8 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </button>
                 <button x-show="isOpen" @click="isOpen = false" class="h-full w-full fixed inset-0 cursor-default"></button>
                 <div x-show="isOpen" class="absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16">
-                    <a href="#" class="block px-4 py-2 account-link hover:text-white">Account</a>
-                    <a href="#" class="block px-4 py-2 account-link hover:text-white">Support</a>
-                    <a href="#" class="block px-4 py-2 account-link hover:text-white">Sign Out</a>
+                    
+                    <a href="logout.php" class="block px-4 py-2 account-link hover:text-white">Sign Out</a>
                 </div>
             </div>
         </header>
@@ -77,7 +76,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ID</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Name</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Email</th>
-                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th>
+                                    <!-- <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th> -->
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                                 </tr>
                             </thead>
@@ -92,7 +91,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <td class="text-left py-3 px-4"><?= $teacher['id']; ?></td>
                                             <td class="text-left py-3 px-4"><?= $teacher['name']; ?></td>
                                             <td class="text-left py-3 px-4"><?= $teacher['email_address']; ?></td>
-                                            <td class="text-left py-3 px-4">
+                                            <!-- <td class="text-left py-3 px-4">
                                                 <?php if ($teacher['status'] == 'inactive'): ?>
                                                     <span class="bg-orange-100 text-orange-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-orange-900 dark:text-orange-300">
                                                         Inactive
@@ -102,7 +101,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                         Active
                                                     </span>
                                                 <?php endif; ?>
-                                            </td>
+                                            </td> -->
                                             <td class="text-left py-3 px-4">
                                                 <div class="flex items-center space-x-4">
                                                     <!-- Edit Action -->
@@ -191,13 +190,13 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <!-- Status -->
-                    <div class="mb-4">
+                    <!-- <div class="mb-4">
                         <label for="editTeacherStatus" class="block text-sm font-medium text-gray-600">Status</label>
                         <select id="editTeacherStatus" name="editTeacherStatus" class="mt-1 p-2 border rounded-md w-full" required>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <!-- Additional fields go here -->
                     <!-- Submit Button -->
@@ -223,7 +222,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const form = document.getElementById('editTeacherForm');
             const teacherNameInput = document.getElementById('editTeacherName');
             const teacherEmailInput = document.getElementById('editTeacherEmail');
-            const teacherStatusInput = document.getElementById('editTeacherStatus');
+            // const teacherStatusInput = document.getElementById('editTeacherStatus');
             const studentIdInput = document.getElementById('editTeacherId');
 
             // You may customize the AJAX request URL and method based on your server-side implementation
@@ -241,7 +240,7 @@ $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     // Populate form fields with class details
                     teacherNameInput.value = data.name;
                     teacherEmailInput.value = data.email_address;
-                    teacherStatusInput.value = data.status;
+                    // teacherStatusInput.value = data.status;
                     studentIdInput.value = teacherId;
 
                     // Toggle the visibility of the modal

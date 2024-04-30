@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" || $isApiRequest) {
             // For web request, set session variables and redirect to dashboard
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['logged_in'] = time();
-            header('Location: dashboard.php');
+            header('Location: classes.php');
             exit;
         }
     } else {
@@ -84,6 +84,18 @@ if (!$isApiRequest):
                 <?php if (isset($error)): ?>
                     <p><?php echo $error; ?></p>
                 <?php endif; ?>
+
+                <!-- Display success message if password reset link is sent -->
+                <?php if (isset($_SESSION['password_reset_success'])): ?>
+                    <p>Password reset link has been sent to your email.</p>
+                    <?php unset($_SESSION['password_reset_success']); ?>
+                <?php endif; ?>
+
+                <!-- Display error message if email is not found during password reset -->
+                <?php if (isset($_SESSION['password_reset_error'])): ?>
+                    <p><?php echo $_SESSION['password_reset_error']; ?></p>
+                    <?php unset($_SESSION['password_reset_error']); ?>
+                <?php endif; ?>
                 
                 <form class="space-y-6" action="login.php" method="POST">
                     <div>
@@ -97,7 +109,7 @@ if (!$isApiRequest):
                         <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
                         <div class="text-sm">
-                            <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                            <a href="forgot_password.php" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
                         </div>
                         </div>
                         <div class="mt-2">
