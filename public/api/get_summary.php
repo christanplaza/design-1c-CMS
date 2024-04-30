@@ -62,7 +62,7 @@ $stmt = $pdo->prepare("
         COUNT(CASE WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL 15 MINUTE THEN 1 END) AS late_count,
         COUNT(CASE 
             WHEN a.first_detected IS NULL 
-            OR (a.last_seen IS NOT NULL AND TIME(a.last_seen) < s.end_time - INTERVAL 15 MINUTE)
+            OR (a.last_detected IS NOT NULL AND TIME(a.last_detected) < s.end_time - INTERVAL 15 MINUTE)
             THEN 1 
         END) AS absent_count
     FROM
