@@ -60,7 +60,11 @@ $stmt = $pdo->prepare("
         st.last_name,
         COUNT(CASE WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) <= s.start_time + INTERVAL 15 MINUTE THEN 1 END) AS present_count,
         COUNT(CASE WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL 15 MINUTE THEN 1 END) AS late_count,
-        COUNT(CASE WHEN a.first_detected IS NULL THEN 1 END) AS absent_count
+        COUNT(CASE 
+            WHEN a.first_detected IS NULL 
+            OR (a.last_seen IS NOT NULL AND TIME(a.last_seen) < s.end_time - INTERVAL 15 MINUTE)
+            THEN 1 
+        END) AS absent_count
     FROM
         students st
         LEFT JOIN attendance_table a ON st.student_number = a.student_number AND DATE(a.first_detected) BETWEEN ? AND ?
