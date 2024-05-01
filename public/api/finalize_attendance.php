@@ -6,7 +6,27 @@ require_once '../../config/db.php';
 // Retrieve the class_id from the request
 $classId = $_GET['class_id'];
 
-$minutesLateThreshold = 15;
+$stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ?");
+$stmt->execute([$classId]);
+$schedules = $stmt->fetch();
+
+// Get the start and end times from the $schedules array
+$startTime = $schedules['start_time'];
+$endTime = $schedules['end_time'];
+
+// Create DateTime objects for the start and end times
+$start = DateTime::createFromFormat('H:i:s', $startTime);
+$end = DateTime::createFromFormat('H:i:s', $endTime);
+
+// Calculate the duration by subtracting the start time from the end time
+$duration = $end->diff($start);
+
+// Get the duration in hours
+$hours = $duration->h;
+
+// Set the classThreshold based on the duration
+$minutesLateThreshold = $hours * 15;
+
 
 // Get today's date and day of the week
 $todayDate = date('Y-m-d');
@@ -37,7 +57,7 @@ if (!$classSchedule) {
 $classStartTime = strtotime($classSchedule['start_time']);
 $classEndTime = strtotime($classSchedule['end_time']);
 
-// Calculate the late threshold (15 minutes after class start time)
+// Calculate the late threshold
 $lateThreshold = $classStartTime + ($minutesLateThreshold * 60);
 
 // Retrieve the class details
@@ -86,6 +106,11 @@ foreach ($enrolledStudents as $student) {
         'first_seen' => $attendanceTimeStamp,
     ];
 }
+
+// Sort the attendance data by last name in alphabetical order
+usort($attendanceData, function($a, $b) {
+    return strcmp($a['last_name'], $b['last_name']);
+});
 
 $returnData = [
     'class_title' => $classInfo['title'],

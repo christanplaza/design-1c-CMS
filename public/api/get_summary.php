@@ -8,7 +8,6 @@ session_start();
 $classId = $_POST['class_id'];
 $period = $_POST['period'];
 
-
 // When ga start kag end ang 1st sem kag 2nd sem 
 
 // Include the PHPSpreadsheet and PHPMailer libraries
@@ -37,6 +36,27 @@ $stmt = $pdo->prepare("SELECT * FROM classes WHERE id = ? ");
 $stmt->execute([$classId]);
 $classInfo = $stmt->fetch();
 
+$stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ?");
+$stmt->execute([$classId]);
+$schedules = $stmt->fetch();
+
+// Get the start and end times from the $schedules array
+$startTime = $schedules['start_time'];
+$endTime = $schedules['end_time'];
+
+// Create DateTime objects for the start and end times
+$start = DateTime::createFromFormat('H:i:s', $startTime);
+$end = DateTime::createFromFormat('H:i:s', $endTime);
+
+// Calculate the duration by subtracting the start time from the end time
+$duration = $end->diff($start);
+
+// Get the duration in hours
+$hours = $duration->h;
+
+// Set the classThreshold based on the duration
+$classThreshold = $hours * 15;
+
 if ($period === 'weekly') {
     $startDate = date('Y-m-d', strtotime('-1 week'));
     $endDate = $currentDate;
@@ -62,18 +82,18 @@ $stmt = $pdo->prepare("
         st.first_name, 
         st.last_name, 
         COUNT(CASE 
-            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) <= s.start_time + INTERVAL 15 MINUTE 
-                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL 15 MINUTE)
+            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) <= s.start_time + INTERVAL {$classThreshold} MINUTE 
+                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL {$classThreshold} MINUTE)
             THEN 1 
         END) AS present_count,
         COUNT(CASE 
-            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL 15 MINUTE 
-                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL 15 MINUTE)
+            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL {$classThreshold} MINUTE 
+                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL {$classThreshold} MINUTE)
             THEN 1 
         END) AS late_count,
         COUNT(CASE 
             WHEN a.first_detected IS NULL 
-                OR (a.last_detected IS NOT NULL AND TIME(a.last_detected) < s.end_time - INTERVAL 15 MINUTE)
+                OR (a.last_detected IS NOT NULL AND TIME(a.last_detected) < s.end_time - INTERVAL {$classThreshold} MINUTE)
             THEN 1 
         END) AS absent_count
     FROM 
