@@ -25,7 +25,8 @@ $duration = $end->diff($start);
 $hours = $duration->h;
 
 // Set the classThreshold based on the duration
-$minutesLateThreshold = $hours * 15;
+//$minutesLateThreshold = $hours * 15; // Comment Out for Demo
+$minutesLateThreshold = 3; // Uncomment for Demo
 
 
 // Get today's date and day of the week

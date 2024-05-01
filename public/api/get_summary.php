@@ -55,7 +55,9 @@ $duration = $end->diff($start);
 $hours = $duration->h;
 
 // Set the classThreshold based on the duration
-$classThreshold = $hours * 15;
+// $classThreshold = $hours * 15; // Comment out for Demo
+
+$classThreshold = 3; // Uncomment For Demo Purposes (minutes)
 
 if ($period === 'weekly') {
     $startDate = date('Y-m-d', strtotime('-1 week'));
