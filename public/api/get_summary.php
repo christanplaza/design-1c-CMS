@@ -57,24 +57,32 @@ if ($period === 'weekly') {
 
 // Retrieve the attendance summary for each student in the specified class and period
 $stmt = $pdo->prepare("
-    SELECT
-        st.student_number,
-        st.first_name,
-        st.last_name,
-        COUNT(CASE WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) <= s.start_time + INTERVAL 15 MINUTE THEN 1 END) AS present_count,
-        COUNT(CASE WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL 15 MINUTE THEN 1 END) AS late_count,
+    SELECT 
+        st.student_number, 
+        st.first_name, 
+        st.last_name, 
+        COUNT(CASE 
+            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) <= s.start_time + INTERVAL 15 MINUTE 
+                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL 15 MINUTE)
+            THEN 1 
+        END) AS present_count,
+        COUNT(CASE 
+            WHEN a.first_detected IS NOT NULL AND TIME(a.first_detected) > s.start_time + INTERVAL 15 MINUTE 
+                AND (a.last_detected IS NULL OR TIME(a.last_detected) >= s.end_time - INTERVAL 15 MINUTE)
+            THEN 1 
+        END) AS late_count,
         COUNT(CASE 
             WHEN a.first_detected IS NULL 
-            OR (a.last_detected IS NOT NULL AND TIME(a.last_detected) < s.end_time - INTERVAL 15 MINUTE)
+                OR (a.last_detected IS NOT NULL AND TIME(a.last_detected) < s.end_time - INTERVAL 15 MINUTE)
             THEN 1 
         END) AS absent_count
-    FROM
+    FROM 
         students st
         LEFT JOIN attendance_table a ON st.student_number = a.student_number AND DATE(a.first_detected) BETWEEN ? AND ?
         LEFT JOIN schedules s ON s.class_id = ?
-    WHERE
+    WHERE 
         st.course = (SELECT course FROM classes WHERE id = ?)
-    GROUP BY
+    GROUP BY 
         st.student_number, st.first_name, st.last_name
 ");
 

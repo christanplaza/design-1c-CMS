@@ -7,7 +7,7 @@
 
             <!-- Modal Content -->
             <div class="inline-block align-bottom p-6 bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <h1 class="text-3xl text-black pb-6">Edit Class</h1>
+                <h1 class="text-3xl text-black pb-6">Edit Schedule</h1>
                 <form id="editScheduleForm" action="process_edit_schedule.php" method="POST">
                     <input type="hidden" name="schedule_id" id="edit_schedule_id">
                     <input type="hidden" name="class_id" id="edit_class_id">
