@@ -25,8 +25,8 @@ $duration = $end->diff($start);
 $hours = $duration->h;
 
 // Set the classThreshold based on the duration
-// $minutesLateThreshold = $hours * 15;
-$minutesLateThreshold = 5;
+$minutesLateThreshold = $hours * 15;
+$minutesAbsentThreshold = 5;
 
 // Get today's date and day of the week
 $todayDate = date('Y-m-d');
@@ -59,6 +59,7 @@ $classEndTime = strtotime($classSchedule['end_time']);
 
 // Calculate the late threshold
 $lateThreshold = $classStartTime + ($minutesLateThreshold * 60);
+$absentThreshold = $classEndTime + ($minutesAbsentThreshold * 60);
 
 // Retrieve the class details
 $stmt = $pdo->prepare("SELECT * FROM classes WHERE id = ?");
@@ -86,11 +87,15 @@ foreach ($enrolledStudents as $student) {
 
     if ($attendanceRecord) {
         $firstSeenTimestamp = strtotime($attendanceRecord['first_detected']);
+        $lastSeenTimestamp = strtotime($attendanceRecord['last_detected']);
         $attendanceTimeStamp = date('d-m-Y h:i A', $firstSeenTimestamp);
 
-        if ($firstSeenTimestamp <= $lateThreshold) {
+        if ($firstSeenTimestamp <= $lateThreshold && $lastSeenTimestamp >= $classEndTime - ($minutesAbsentThreshold * 60)) {
             $status = 'Present';
-        } else {
+        } else if ($lastSeenTimestamp < $classEndTime - ($minutesAbsentThreshold * 60)) {
+            $status = 'Absent';
+        } 
+        else {
             $status = 'Late';
         }
     } else {

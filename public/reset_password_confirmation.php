@@ -2,13 +2,24 @@
 session_start();
 include '../config/db.php'; // Include your database connection
 
-// Check if the email is set in the session
-if (!isset($_SESSION['password_reset_email'])) {
+
+if (!isset($_GET['token'])) {
     header('Location: login.php');
     exit;
 }
 
-$email = $_SESSION['password_reset_email'];
+$resetToken = $_GET['token'];
+
+$verifyTokenSql = "SELECT id, email FROM users WHERE reset_token = :reset_token AND reset_token_expiration > NOW()";
+$verifyTokenStmt = $pdo->prepare($verifyTokenSql);
+$verifyTokenStmt->bindParam(':reset_token', $resetToken, PDO::PARAM_STR);
+$verifyTokenStmt->execute();
+$user = $verifyTokenStmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    header('Location: login.php');
+    exit;
+}
 
 // If the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,15 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Passwords do not match.";
     } else {
         // Update the user's password in the database
-        $updateSql = "UPDATE users SET password = :password WHERE email = :email";
+        $updateSql = "UPDATE users SET password = :password, reset_token = NULL, reset_token_expiration = NULL WHERE id = :id";
         $updateStmt = $pdo->prepare($updateSql);
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $updateStmt->bindValue(':password', $hashedPassword);
-        $updateStmt->bindValue(':email', $email);
+        $updateStmt->bindValue(':id', $user['id']);
         $updateStmt->execute();
 
-        // Clear the session and redirect to the login page
-        unset($_SESSION['password_reset_email']);
         header('Location: login.php');
         exit;
     }
@@ -51,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p><?php echo $error; ?></p>
                 <?php endif; ?>
                 
-                <form class="space-y-6" action="reset_password_confirmation.php" method="POST">
+                <form class="space-y-6" action="reset_password_confirmation.php?token=<?= $resetToken ?>" method="POST">
                     <div>
                         <label for="new_password" class="block text-sm font-medium leading-6 text-gray-900">New Password</label>
                         <div class="mt-2">
