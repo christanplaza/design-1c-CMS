@@ -6,13 +6,24 @@ require_once '../../config/db.php';
 // Retrieve the class_id from the request
 $classId = $_GET['class_id'];
 
+// Get all Schedules
 $stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ?");
 $stmt->execute([$classId]);
 $schedules = $stmt->fetch();
 
+// Get today's date and day of the week
+$todayDate = date('Y-m-d');
+$dayOfWeek = date('N'); // 1 (Monday) to 7 (Sunday)
+$days = array('', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+
+// Retrieve the class schedule for today
+$stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ? AND day_of_week = ?");
+$stmt->execute([$classId, $days[$dayOfWeek]]);
+$classSchedule = $stmt->fetch();
+
 // Get the start and end times from the $schedules array
-$startTime = $schedules['start_time'];
-$endTime = $schedules['end_time'];
+$startTime = $classSchedule['start_time'];
+$endTime = $classSchedule['end_time'];
 
 // Create DateTime objects for the start and end times
 $start = DateTime::createFromFormat('H:i:s', $startTime);
@@ -27,16 +38,6 @@ $hours = $duration->h;
 // Set the classThreshold based on the duration
 $minutesLateThreshold = $hours * 15;
 $minutesAbsentThreshold = 5;
-
-// Get today's date and day of the week
-$todayDate = date('Y-m-d');
-$dayOfWeek = date('N'); // 1 (Monday) to 7 (Sunday)
-$days = array('', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-
-// Retrieve the class schedule for today
-$stmt = $pdo->prepare("SELECT * FROM schedules WHERE class_id = ? AND day_of_week = ?");
-$stmt->execute([$classId, $days[$dayOfWeek]]);
-$classSchedule = $stmt->fetch();
 
 $stmt = $pdo->prepare("SELECT title FROM classes WHERE id = ?");
 $stmt->execute([$classId]);
@@ -72,7 +73,6 @@ $stmt->execute([$class['course']]);
 $enrolledStudents = $stmt->fetchAll();
 
 $attendanceData = [];
-
 foreach ($enrolledStudents as $student) {
     $studentNumber = $student['student_number'];
     $firstName = $student['first_name'];
@@ -90,13 +90,18 @@ foreach ($enrolledStudents as $student) {
         $lastSeenTimestamp = strtotime($attendanceRecord['last_detected']);
         $attendanceTimeStamp = date('d-m-Y h:i A', $firstSeenTimestamp);
 
-        if ($firstSeenTimestamp <= $lateThreshold && $lastSeenTimestamp >= $classEndTime - ($minutesAbsentThreshold * 60)) {
-            $status = 'Present';
-        } else if ($lastSeenTimestamp < $classEndTime - ($minutesAbsentThreshold * 60)) {
-            $status = 'Absent';
-        } 
-        else {
-            $status = 'Late';
+        if ($firstSeenTimestamp <= $lateThreshold) {
+            if ($lastSeenTimestamp >= $classEndTime - ($minutesAbsentThreshold * 60)) {
+                $status = 'Present';
+            } else {
+                $status = 'Absent';
+            }
+        } else {
+            if ($lastSeenTimestamp >= $classEndTime - ($minutesAbsentThreshold * 60)) {
+                $status = 'Late';
+            } else {
+                $status = 'Absent';
+            }
         }
     } else {
         $status = 'Absent';
@@ -111,6 +116,13 @@ foreach ($enrolledStudents as $student) {
         'first_seen' => $attendanceTimeStamp,
     ];
 }
+
+// Start    End	    Result
+// 3:01     3:58	Present
+// 3:17     3:58	Late
+// 3:02	    3:50	Absent
+// 3:20	    3:30	Absent
+// NULL     NULL    Absent
 
 // Sort the attendance data by last name in alphabetical order
 usort($attendanceData, function($a, $b) {

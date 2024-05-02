@@ -60,21 +60,22 @@ $hours = $duration->h;
 $classThreshold = 3; // Uncomment For Demo Purposes (minutes)
 
 if ($period === 'weekly') {
-    $startDate = date('Y-m-d', strtotime('-1 week'));
+    $startDate = date('Y-m-d', strtotime('-4 days'));
     $endDate = $currentDate;
 } elseif ($period === 'monthly') {
-    $startDate = date('Y-m-01');
-    $endDate = date('Y-m-t');
+    $startDate = date('Y-m-01'); // start of month
+    $endDate = date('Y-m-t'); // end of month
 } elseif ($period === 'semestral') {
     $currentMonth = date('m');
     $currentYear = date('Y');
     if ($currentMonth >= 1 && $currentMonth <= 6) { // Sem 1 = 1st half of year, sem 2 = 2nd half of year
-        $startDate = $currentYear . '-01-01';
-        $endDate = $currentYear . '-06-30';
+        $startDate = $currentYear . '-01-01'; // can be set to mm-dd of start of sem 1
+        $endDate = $currentYear . '-06-30'; // can be set to mm-dd of end of sem 1
     } else {
-        $startDate = $currentYear . '-07-01';
-        $endDate = $currentYear . '-12-31';
+        $startDate = $currentYear . '-07-01'; // can be set to mm-dd of start of sem 2
+        $endDate = $currentYear . '-12-31'; // can be set to mm-dd of end of sem 2
     }
+    // Select Date Range
 }
 
 // Retrieve the attendance summary for each student in the specified class and period
